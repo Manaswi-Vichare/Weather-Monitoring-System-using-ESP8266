@@ -1,0 +1,77 @@
+//ESP8266 Interfaced with DHT11 Sensor Data to THINGSPEAK
+#include <DHT.h> // DHT.h library
+#include <ESP8266WiFi.h> // ESP8266WiFi.h library
+
+int sensorPin = A0;
+
+#define DHTPIN D4 //variable storing D4
+#define DHTTYPE DHT11
+
+const char* ssid = "AndroidAPE7C5";
+const char* password= "thor@123";
+const char host = "api.thingspeak.com";
+const char* writeAPIKey = "AESTRSAOYWNAWS7F";
+
+DHT dht (DHTPIN, DHTTYPE); //Intialization of DHT11
+
+void setup() {
+// Initialize sensor
+Serial.begin(9600); //Intization of Serial Communication
+dht.begin(); //To start the DHT11 Sensor
+delay(100);
+
+// Connect to WiFi network
+WiFi.begin(ssid, password); //Connecting Device to wifi
+while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+}
+}
+
+void loop() {
+float sensorValue = analogRead(sensorPin);
+float humidity = dht.readHumidity(); //Storing the Humidity
+float temperature = dht.readTemperature(); // Storing the Temperature
+float temp_1 = temperature * 1.8;
+float temp_2 = temp_1 + 32;
+float cal1 = temp_2 - 68.0;
+float cal2 = cal1 * 1.2;
+float cal3 = humidity * 0.094;
+float cal4 + temp_2 + 61.0+ cal2+ cal3;
+float heat_index = 0.5 * cal4;
+Serial.print(F("Humidity: "));
+Serial.println(humidity);
+Serial.print(F("Temperature: "));
+Serial.println(temperature);
+Serial.print(F("Temperature (in F): "));
+Serial.println(temp_2);
+Serial.print(F("Soil Moisture: "));
+Serial.println(sensorValue);
+Serial.println(F("Heat Index: "));
+Serial.println(heat_index);
+if (isnan (humidity) || isnan (temperature) || isnan (temp_2) || isnan (sensorValue) || isnan (heat_index)) {
+    return;
+}
+
+// make TCP connections
+
+WiFiclient client;
+const int httpPort = 80;
+if (!client.connect (host, httpPort)) {
+    return;
+}
+String url="/update?key=";
+url += writeAPIKey;
+url += "&field1=";
+url += String (sensorValue);
+url += "&field2=";
+url += string (temperature);
+url += "&field3=";
+url += String (humidity);
+url += "&field4=";
+url += string (heat_index);
+url += "\r\n";
+
+// Request to the server
+client.print(string ("GET") + url + "HTTP/1.1\r\n" + "Host: "host + "\r\n" + "Connection: close\r\n\r\n");
+delay(100);
+}

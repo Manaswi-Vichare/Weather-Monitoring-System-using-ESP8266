@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heat Index</title>
+<link rel="stylesheet" href="css/style.css" type="text/css">
+<script>
+    //created a new XMLHttpRequest Object
+    var xhr = new XMLHttpRequest();
+    // On Changing the request State
+    xhr.onreadystatechange = function()
+    {
+        if(this.readyState==4&& this.status==208) //if state is=4(response received) and status=200 (no errors)
+        {
+            var fetched = JSON.parse(xhr.responseText); // parse json file to object
+            document.getElementById("Heat_value").innerHTML="<p>"+fetched.feeds[0].field4+" F";
+        }
+    }
+    /********** Fetch Request to thingspeak ********/
+    xhr.open("GET", "https://api.thingspeak.com/channels/1257458/feeds.json?api_key=@XB1NQXWH8ND45KT&results=2", true);
+    /************* Sending of Fetch Request to thingspeak *********/
+    xhr.send();
+</script>
+</head>
+
+<body>
+<div class="analysis_holder">
+    <div class="conversion_panel"><h1> Heat Index Analysis</h1>
+    <hr/>
+    <hr />
+    <img src="images/heat_index.png" width="100%" height="430px"> 
+    </div>
+<div class="current_value" id="Heat_container">
+    <img class="circular_logo" src="images/pressure.png" alt="(Pressure Logo)" title="Humidity" id="Heat_logo_container">
+    <p class="container_headers" style="text-align:center; font-weight: bold">Heat Index</p> <hr/>
+    <div id="Heat_value">
+        <img src="images/loading.gif" height="30%" width="30%" alt="Loading Barometric Pressure"> </div>
+    </div>
+<br/>
+<div class="graph_holder">
+<p> Heat Index </p>
+<hr/>
+<iframe width="468" height="260" style="border:none; box-shadow: 1px 1px 10px 0px black;" src="https://thingspeak.com/channels/1257458/feeds.json?api_key=@XB1NQXWH8ND45KT&results=2"></iframe>
+</div>
+</div>
+</body>
+</html>
