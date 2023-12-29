@@ -1,6 +1,6 @@
 # Weather-Monitoring-System-using-ESP8266
 
-**Second-year project in Computer Science and Engineering (Intelligent Systems) at MIT School of Engineering, MIT ADT University.**
+**Second-year B.Tech project in Computer Science and Engineering (Intelligent Systems) at MIT School of Engineering, MIT ADT University.**
 
 **Abstract:**
 
